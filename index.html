@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренажёр промптов для преподавателя</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1F2D6B; --teal:#0A7F7A; --blue:#0A7F7A; --teal2:#0E9E98; --pale:#BFE6E3; --mint:#CDEBEA; --soft:#F2F9F8; --ink:#1B2540;
+  --amber:#F2A93B; --green:#2F9E5B; --red:#C8553D; --line:#D3EAE8; --muted:#4D5A73; --gray:#F1F4F4;
+  --shadow:0 10px 30px rgba(31,45,107,.10); --serif:'Merriweather',Georgia,'Times New Roman',serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{position:relative;overflow-x:hidden;margin:0;font-family:'Roboto',Calibri,Carlito,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.6;color:var(--ink);background:linear-gradient(to bottom,var(--mint) 0,var(--mint) 300px,var(--gray) 300px);background-repeat:no-repeat;background-color:var(--gray);-webkit-text-size-adjust:100%}
+.deco{position:absolute;top:0;left:0;right:0;height:360px;overflow:hidden;z-index:0;pointer-events:none}
+.deco::before{content:"";position:absolute;top:-120px;right:-100px;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,.45)}
+.deco::after{content:"";position:absolute;top:150px;right:240px;width:24px;height:24px;border-radius:50%;background:var(--teal2)}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:26px 20px 90px}
+header.top{display:flex;align-items:center;gap:16px;margin-bottom:22px;padding:8px 0 4px}
+.logo{flex:0 0 auto;width:56px;height:56px;border-radius:50%;background:var(--teal);display:grid;place-items:center;box-shadow:0 0 0 5px rgba(255,255,255,.6)}
+.logo svg{width:28px;height:28px;fill:#fff}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:var(--teal);text-transform:uppercase}
+h1{margin:2px 0 0;font-family:var(--serif);font-weight:700;font-size:32px;line-height:1.2;color:var(--navy)}
+.sub{color:#35506B;margin:4px 0 0}
+h2{font-family:var(--serif);font-weight:700;font-size:25px;line-height:1.3;color:var(--navy);margin:0 0 12px}
+h3{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.35;color:var(--navy);margin:22px 0 8px}
+p{margin:0 0 12px}
+.muted{color:var(--muted)}
+.small{font-size:15px}
+
+/* stepper */
+.stepper{list-style:none;margin:0 0 26px;padding:8px 10px;display:flex;gap:6px;overflow-x:auto;background:#fff;border-radius:999px;box-shadow:var(--shadow);scrollbar-width:thin}
+.stepper li{flex:0 0 auto}
+.step{display:flex;align-items:center;gap:8px;border:2px solid transparent;background:transparent;color:var(--navy);border-radius:999px;padding:5px 14px 5px 5px;font:inherit;font-size:15px;font-weight:500;cursor:pointer;white-space:nowrap}
+.step:hover{background:var(--soft)}
+.step .num{width:30px;height:30px;border-radius:50%;background:var(--mint);color:var(--navy);display:grid;place-items:center;font-weight:700;font-size:14px}
+.step.done .num{background:var(--green);color:#fff}
+.step.active{background:var(--teal);color:#fff}
+.step.active .num{background:#fff;color:var(--teal)}
+.step:focus-visible,.btn:focus-visible,.opt:focus-visible,.chip:focus-visible,.tab:focus-visible{outline:3px solid var(--teal2);outline-offset:2px}
+
+/* cards & layout */
+.card{background:#fff;border-radius:22px;padding:26px 28px;margin-bottom:22px;box-shadow:var(--shadow)}
+.card.white{background:#fff}
+.card.navy{background:var(--navy);color:#fff;box-shadow:0 14px 34px rgba(31,45,107,.28)}
+.card.navy h2,.card.navy h3{color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.build{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:22px;align-items:start}
+.sticky{position:sticky;top:12px}
+@media(max-width:900px){.grid2,.grid3,.build{grid-template-columns:1fr}.sticky{position:static}h1{font-size:26px}h2{font-size:22px}.card{padding:20px 18px;border-radius:18px}.deco{opacity:.6}}
+@media(max-width:560px){body{font-size:16px;background:linear-gradient(to bottom,var(--mint) 0,var(--mint) 250px,var(--gray) 250px);background-repeat:no-repeat;background-color:var(--gray)}.wrap{padding:16px 12px 80px}.logo{width:46px;height:46px}.logo svg{width:24px;height:24px}h1{font-size:22px}h2{font-size:20px}h3{font-size:17px}.stepper{border-radius:22px;margin-bottom:18px}.bar{grid-template-columns:96px 1fr 40px}.btn{padding:12px 20px}.navbtns{flex-wrap:wrap}.rc::after{font-size:34px}table.m{font-size:15px}}
+@media(max-width:360px){.sub{font-size:15px}.card{padding:16px 14px}.bar{grid-template-columns:80px 1fr 36px}}
+
+/* form */
+label.lbl{display:block;font-weight:700;color:var(--navy);margin:0 0 4px;font-size:16px}
+.ta,.inp{width:100%;border:2px solid var(--line);border-radius:14px;padding:12px 16px;font:inherit;color:var(--ink);background:#fff}
+.ta{resize:vertical;min-height:84px}
+.ta:focus,.inp:focus{outline:none;border-color:var(--teal2);box-shadow:0 0 0 4px rgba(14,158,152,.2)}
+.ta[readonly]{background:#F4F7F7;color:var(--muted)}
+.field{margin-bottom:16px}
+.tag{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;font-size:15px;margin-right:8px}
+
+/* buttons */
+.btn{border:0;border-radius:999px;padding:13px 28px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;background:var(--teal);color:#fff;box-shadow:0 6px 16px rgba(10,127,122,.28);transition:background .2s,transform .2s}
+.btn:hover{background:#086A66;transform:translateY(-1px)}
+.btn.small{padding:8px 18px;font-size:15px}
+.btn.alt{background:#fff;color:var(--navy);border:2px solid var(--navy);box-shadow:none}
+.btn.alt:hover{background:var(--soft);transform:none}
+.btn.amber{background:var(--amber);color:var(--ink)}
+.btn.amber:hover{background:#f5b852}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.navbtns{display:flex;justify-content:space-between;gap:12px;margin-top:8px}
+.chip{border:2px solid var(--teal2);background:#fff;color:var(--navy);border-radius:999px;padding:6px 14px;font:inherit;font-size:15px;cursor:pointer;text-align:left}
+.chip:hover{background:var(--soft)}
+.chip.used{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* RCDF cards */
+.rc{position:relative;background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:20px 22px;counter-increment:rc;overflow:hidden}
+.grid2{counter-reset:rc}
+.rc::after{content:"0" counter(rc);position:absolute;top:10px;right:18px;font-family:var(--serif);font-weight:700;font-size:44px;line-height:1;color:var(--pale);opacity:.8;pointer-events:none}
+.rc .letter{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px var(--mint);color:#fff;font-weight:700;font-size:22px;margin-right:10px}
+.rc h3{display:inline;margin:0}
+.rc .en{color:var(--teal);font-weight:700;font-size:14px;letter-spacing:.08em;margin-left:6px}
+.ex{border-radius:10px;padding:8px 12px;margin-top:8px;font-size:16px}
+.ex.bad{background:#FBEDE9}
+.ex.good{background:#DDF3E6}
+.ex b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+
+/* quiz */
+.q{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.q .t{font-weight:600;margin-bottom:10px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:2px solid var(--teal);background:#fff;color:var(--navy);border-radius:999px;padding:6px 16px;font:inherit;font-weight:700;font-size:16px;cursor:pointer}
+.opt:hover{background:var(--soft)}
+.opt.ok{background:var(--green);border-color:var(--green);color:#fff}
+.opt.no{background:var(--red);border-color:var(--red);color:#fff}
+.opt:disabled{cursor:default}
+.fbtxt{margin-top:8px;font-size:16px}
+
+/* feedback */
+.fb-head{display:flex;gap:14px;align-items:center;margin-bottom:10px}
+.ring{width:96px;height:96px;flex:0 0 auto}
+.ring text{font-family:inherit;font-weight:700}
+.lvl{display:inline-block;border-radius:999px;padding:3px 14px;font-weight:700;font-size:16px;color:#fff}
+.lv1{background:var(--red)}.lv2{background:#B9791A}.lv3{background:var(--teal)}.lv4{background:var(--green)}
+.bars{margin:10px 0}
+.bar{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;margin:5px 0;font-size:15px}
+.bar .track{height:12px;background:var(--mint);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.card.navy .bar .track{background:rgba(255,255,255,.18);border-color:transparent}
+.bar .fill{height:100%;border-radius:999px;background:var(--teal2)}
+.bar .fill.hi{background:var(--green)}.bar .fill.lo{background:var(--red)}
+.bar .pct{text-align:right;color:var(--muted)}
+.warn{background:#FFF3DC;border-left:0;border-radius:10px;padding:8px 12px;margin:8px 0;font-size:15px}
+.warn::before{content:"⚠ ";font-weight:700}
+.rules{list-style:none;margin:8px 0 0;padding:0;font-size:15px}
+.rules li{display:flex;gap:8px;margin:3px 0}
+.rules .ic{flex:0 0 22px;font-weight:700}
+.ic.ok{color:var(--green)}.ic.part{color:#B9791A}.ic.no{color:var(--red)}
+.rules .hint{color:var(--muted);display:block}
+.todo{margin:10px 0 0;padding-left:20px;font-size:16px}
+.todo li{margin:4px 0}
+.preview{background:var(--soft);border:2px dashed var(--teal2);border-radius:14px;padding:12px 14px;white-space:pre-wrap;font-size:16px;min-height:80px}
+.sample{background:#F1FAF4;border:2px solid var(--green);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:16px}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{border:2px solid var(--teal);background:#fff;color:var(--navy);border-radius:999px;padding:6px 16px;font:inherit;font-weight:700;cursor:pointer}
+.tab.on{background:var(--teal);color:#fff}
+.tab.done::after{content:" ✓"}
+blockquote.weak{margin:0 0 12px;padding:12px 16px;background:#FBEDE9;border-radius:14px;font-style:italic}
+
+/* pairs */
+.pr{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.pr{grid-template-columns:1fr}}
+.opt-card{background:var(--soft);border:2px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:16px}
+.opt-card.right{border-color:var(--green);background:#EFF9F2}
+.opt-card.wrong{border-color:var(--red);background:#FCF1EE}
+.opt-card .lab{font-weight:700;color:var(--navy)}
+
+/* iterations */
+.it{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.it-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.badge{border-radius:999px;background:var(--navy);color:#fff;padding:3px 14px;font-weight:700}
+.delta{font-weight:700}.delta.up{color:var(--green)}.delta.down{color:var(--red)}
+.chart{display:flex;align-items:flex-end;gap:10px;height:120px;padding:6px 10px;background:var(--soft);border-radius:14px;border:1px solid var(--line)}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:14px}
+.col .b{width:100%;max-width:60px;background:var(--teal2);border-radius:8px 8px 0 0;min-height:2px}
+.checks label{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer}
+.checks input{width:22px;height:22px;margin-top:2px;accent-color:var(--teal)}
+
+/* final */
+table.m{width:100%;border-collapse:collapse;font-size:17px}
+table.m td{padding:9px 10px;border-bottom:1px solid var(--line)}
+table.m td:last-child{font-weight:700;text-align:right;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:999px;opacity:0;transition:.25s;z-index:20;pointer-events:none;font-size:16px}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media(max-width:700px){.deco::after{display:none}}
+
+</style>
+</head>
+<body>
+<div class="deco" aria-hidden="true"></div>
+<div class="wrap">
+  <header class="top">
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 3h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-5 4V4a1 1 0 0 1 1-1z"/></svg></div>
+    <div>
+      <div class="kicker">Практика · Промпт-инжиниринг</div>
+      <h1>Тренажёр промптов</h1>
+      <p class="sub">Учимся поручать ИИ создание презентации по тексту своей лекции</p>
+    </div>
+  </header>
+  <nav aria-label="Этапы тренажёра"><ol class="stepper" id="stepper"></ol></nav>
+  <main id="view"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/* ===== ENGINE: проверка промптов по правилам ===== */
+var GROUPS = [
+  { id: 'role', name: 'Роль', max: 15 },
+  { id: 'ctx', name: 'Контекст', max: 25 },
+  { id: 'task', name: 'Задача', max: 20 },
+  { id: 'src', name: 'Опора на текст', max: 15 },
+  { id: 'fmt', name: 'Формат', max: 15 },
+  { id: 'lim', name: 'Ограничения', max: 10 }
+];
+
+function reTest(re, t) { return re.test(t) ? 1 : 0; }
+var RE_ROLE = /(^|[\s.!?\n])(ты|вы)\s+(—|–|-|опытн|доцент|преподават|методист|эксперт|профессор|специалист|педагог|ассистент|редактор|дизайнер|помощник)|выступ(ай|айте)\s+как|в\s+роли|представь,?\s+что\s+ты|действуй\s+как|твоя\s+роль/i;
+
+var RULES = [
+  { id: 'r1', group: 'role', field: 'role', fields: ['role'], pts: 8, label: 'Задана роль ИИ',
+    test: function (t) { return reTest(RE_ROLE, t); },
+    hint: 'Начните с роли: «Ты методист и дизайнер учебных презентаций…». Роль задаёт уровень и лексику ответа.' },
+  { id: 'r2', group: 'role', field: 'role', fields: ['role'], pts: 7, label: 'Роль называет специализацию',
+    test: function (t) {
+      if (!reTest(RE_ROLE, t)) return 0;
+      return /(методист|дизайнер|редактор|эксперт|специалист|разработчик)[^.]*презентаци|презентаци[^.]*(методист|дизайнер|редактор|эксперт|специалист)/i.test(t) ? 1 : 0.4;
+    },
+    hint: 'Уточните специализацию: «…методист и дизайнер учебных презентаций для вуза».' },
+
+  { id: 'c1', group: 'ctx', field: 'ctx', fields: ['ctx'], pts: 7, label: 'Аудитория: уровень и курс',
+    test: function (t) { return reTest(/(бакалавр|магистр|\d\s*курс|курс|студент|слушател|аспирант|групп)/i, t); },
+    hint: 'Назовите аудиторию: «бакалавриат, 2 курс» или «магистратура, группа 25 человек».' },
+  { id: 'c2', group: 'ctx', field: 'ctx', fields: ['ctx'], pts: 6, label: 'Тема лекции',
+    test: function (t) {
+      var a = /(дисциплин|тем[аыуе]|раздел)/i.test(t), b = /«[^»]+»/.test(t);
+      return a && b ? 1 : (a || b ? 0.5 : 0);
+    },
+    hint: 'Назовите тему в кавычках: «тема «Договор купли-продажи»».' },
+  { id: 'c3', group: 'ctx', field: 'ctx', fields: ['ctx'], pts: 6, label: 'Цель занятия',
+    test: function (t) { return reTest(/(цель|чтобы|должн[аы]?|научи|смогут|умел|уметь|после\s+(лекции|занятия))/i, t); },
+    hint: 'Добавьте цель: «цель: студенты применяют нормы к ситуации».' },
+  { id: 'c4', group: 'ctx', field: 'ctx', fields: ['ctx'], pts: 6, label: 'Формат и время занятия',
+    test: function (t) {
+      var a = /(лекци|семинар|практическ|занят)/i.test(t);
+      var b = /(\d+\s*(?:минут|мин(?![а-яё])|час|академ))/i.test(t);
+      return (a ? 0.5 : 0) + (b ? 0.5 : 0);
+    },
+    hint: 'Укажите тип и длительность: «лекция 80 минут».' },
+
+  { id: 't1', group: 'task', field: 'task', fields: ['task'], pts: 8, label: 'Чёткое действие',
+    test: function (t) { return reTest(/(создай|составь|подготовь|сделай|разработай|построй|преобразуй|оформи|сформируй|преврати)/i, t); },
+    hint: 'Начните задачу с глагола: «Создай…», «Составь…», «Преврати текст в…».' },
+  { id: 't2', group: 'task', field: 'task', fields: ['task'], pts: 6, label: 'Назван ожидаемый результат',
+    test: function (t) { return reTest(/(презентаци|слайд)/i, t); },
+    hint: 'Назовите результат прямо: «презентацию лекции».' },
+  { id: 't3', group: 'task', field: 'task', fields: ['task'], pts: 6, label: 'Указан объём (число слайдов)',
+    test: function (t) { return reTest(/\d+\s*(?:[–—-]\s*\d+\s*)?слайд|слайд[а-яё]*\s*[:—–-]?\s*(?:от\s*)?\d+/i, t); },
+    hint: 'Задайте объём числом: «на 12 слайдов».' },
+
+  { id: 's1', group: 'src', field: 'task', fields: ['task', 'ctx', 'limits'], pts: 8, label: 'Указан исходный текст лекции',
+    test: function (t) { return reTest(/(приложенн|загруженн|прикреплённ|прикреплен|вставленн|по\s+тексту|на\s+основе\s+(?:приложенн|загруженн|моего|текста)|на\s+основании|по\s+(?:моей|приложенной)\s+лекци|мо(?:й|его|ей|ю)\s+(?:текст|лекци|конспект)|ниже\s+(?:текст|привед))/i, t); },
+    hint: 'Скажите, что текст приложен: «по приложенному тексту лекции».' },
+  { id: 's2', group: 'src', field: 'limits', fields: ['task', 'limits'], pts: 7, label: 'Запрет придумывать от себя',
+    test: function (t) { return reTest(/(только\s+(?:по|на|из|приложенн|текст|информаци|факт)|не\s+добавляй|ничего\s+не\s+добавляй|не\s+придумывай|не\s+выдумывай|без\s+добавлени|не\s+используй\s+(?:внешн|сторонн)|не\s+привлекай)/i, t); },
+    hint: 'Ограничьте выдумки: «используй только текст, ничего не добавляй от себя».' },
+
+  { id: 'f1', group: 'fmt', field: 'fmt', fields: ['fmt'], pts: 8, label: 'Указано, в каком виде выдать результат',
+    test: function (t) { return reTest(/(таблиц|список|столбц|пункт|нумерованн|по\s+слайдам|в\s+виде|структур|формат)/i, t); },
+    hint: 'Укажите вид выдачи: «по слайдам нумерованным списком» или «таблица: № слайда, заголовок, тезисы».' },
+  { id: 'f2', group: 'fmt', field: 'fmt', fields: ['fmt'], pts: 7, label: 'Перечислены элементы слайда',
+    test: function (t) {
+      var words = [/заголов/i, /тезис/i, /визуал|иллюстрац|схем|диаграмм/i, /вопрос/i, /заметк|комментар/i, /источник|откуда/i, /определени/i, /пример/i];
+      var n = 0; words.forEach(function (w) { if (w.test(t)) n++; });
+      return n >= 2 ? 1 : (n === 1 ? 0.5 : 0);
+    },
+    hint: 'Перечислите, что должно быть на каждом слайде: заголовок, до 3 тезисов, предложение визуала, вопрос аудитории. Можно добавить стиль: строгий, академический.' },
+
+  { id: 'l1', group: 'lim', field: 'limits', fields: ['limits', 'fmt'], pts: 5, label: 'Измеримые ограничения',
+    test: function (t) { return reTest(/(не\s+более|не\s+больше|не\s+длиннее|максимум|до\s+\d+|не\s+менее|\d+\s*слов|\d+\s*тезис)/i, t); },
+    hint: 'Замените «кратко» на число: «до 3 тезисов на слайд, до 12 слов в тезисе».' },
+  { id: 'l2', group: 'lim', field: 'limits', fields: ['limits', 'fmt', 'task'], pts: 5, label: 'Можно проверить по тексту',
+    test: function (t) { return reTest(/(откуда\s+взято|фрагмент|ссылк|нет\s+в\s+тексте|пометь|отметь|укажи|если\s+(?:в\s+тексте|данных))/i, t); },
+    hint: 'Добавьте проверку: «укажи, откуда взято в тексте; если данных нет, пометь «нет в тексте»».' }
+];
+
+function getRuleText(rule, src) {
+  if (typeof src === 'string') return src;
+  return rule.fields.map(function (f) { return src[f] || ''; }).join('\n');
+}
+function fullText(src) {
+  if (typeof src === 'string') return src;
+  return ['role', 'ctx', 'task', 'fmt', 'limits'].map(function (f) { return src[f] || ''; }).filter(Boolean).join('\n');
+}
+function levelOf(score) {
+  if (score >= 80) return { name: 'Профессиональный', cls: 'lv4' };
+  if (score >= 60) return { name: 'Хороший', cls: 'lv3' };
+  if (score >= 35) return { name: 'Базовый', cls: 'lv2' };
+  return { name: 'Начальный', cls: 'lv1' };
+}
+function analyze(src) {
+  var rules = RULES.map(function (r) {
+    var v = Math.max(0, Math.min(1, r.test(getRuleText(r, src) || '')));
+    return { id: r.id, group: r.group, field: r.field, label: r.label, hint: r.hint, pts: r.pts, v: v, got: r.pts * v };
+  });
+  var score = Math.round(rules.reduce(function (a, r) { return a + r.got; }, 0));
+  var groups = GROUPS.map(function (g) {
+    var got = 0; rules.forEach(function (r) { if (r.group === g.id) got += r.got; });
+    return { id: g.id, name: g.name, max: g.max, got: got, pct: Math.round(100 * got / g.max) };
+  });
+  var txt = fullText(src);
+  var warnings = [];
+  if (txt.trim().length > 0 && txt.trim().length < 80) warnings.push('Промпт очень короткий: ИИ придётся угадывать, чего вы хотите.');
+  if (txt.length > 1800) warnings.push('Промпт слишком длинный: разделите задачу на шаги и уточняйте в диалоге.');
+  if (/(красив|интересн|современн|как\s+можно\s+лучше|подробнее|круто|что-нибудь|как-нибудь|хорош(?:ую|ий|о))/i.test(txt)) warnings.push('Есть оценочные слова («красиво», «интересно»). Замените их измеримыми критериями: число слайдов, число тезисов.');
+  if (/(\+?\d[\d\s()-]{8,}\d)|[\w.-]+@[\w-]+\.\w+|паспорт|номер\s+телефона/i.test(txt)) warnings.push('Похоже на персональные данные. Уберите их: в ИИ-сервисы личные данные не вводим.');
+  var missing = rules.filter(function (r) { return r.v < 1; }).sort(function (a, b) { return (b.pts - b.got) - (a.pts - a.got); });
+  return { score: score, level: levelOf(score), rules: rules, groups: groups, warnings: warnings, missing: missing };
+}
+function assemble(f) {
+  return ['role', 'ctx', 'task', 'fmt', 'limits'].map(function (k) { return (f[k] || '').trim(); }).filter(Boolean).join('\n\n');
+}
+/* ===== END ENGINE ===== */
+
+
+/* ===== DATA ===== */
+var STEPS = [
+  { id: 'start', label: 'Старт' },
+  { id: 'diag', label: 'Диагностика' },
+  { id: 'rcdf', label: 'Схема RCDF' },
+  { id: 'build', label: 'Конструктор' },
+  { id: 'train', label: 'Тренажёр' },
+  { id: 'pairs', label: 'Сравни' },
+  { id: 'iter', label: 'Итерации' },
+  { id: 'final', label: 'Итог' }
+];
+
+var RCDF_CARDS = [
+  { l: 'R', name: 'Роль', en: 'Role', why: 'Задаёт уровень, лексику и позицию эксперта, от лица которого отвечает ИИ.',
+    bad: 'Ты помощник.', good: 'Ты методист и дизайнер учебных презентаций для вуза.' },
+  { l: 'C', name: 'Контекст', en: 'Context', why: 'Объясняет, для кого и зачем: аудитория, тема, цель, время.',
+    bad: 'Для студентов.', good: 'Бакалавриат «Юриспруденция», 2 курс. Лекция 80 минут, тема «Договор купли-продажи». Цель: студенты применяют нормы к ситуации.' },
+  { l: 'D', name: 'Задача', en: 'Directive', why: 'Говорит, что именно сделать и какой результат получить. Для нашего кейса: презентация по вашему тексту.',
+    bad: 'Сделай презентацию.', good: 'Создай презентацию на 12 слайдов только по приложенному тексту лекции.' },
+  { l: 'F', name: 'Формат', en: 'Format', why: 'Определяет форму результата, чтобы его можно было сразу использовать.',
+    bad: 'Сделай красиво.', good: 'Выдай по слайдам нумерованным списком. На каждом слайде: заголовок, до 3 тезисов, предложение визуала.' }
+];
+
+var QUIZ = [
+  { t: 'Ты методист и дизайнер учебных презентаций для вуза.', a: 'R', why: 'Это роль: кто отвечает и в какой области.' },
+  { t: 'Бакалавриат, 2 курс, лекция 80 минут.', a: 'C', why: 'Это контекст: аудитория и условия занятия.' },
+  { t: 'Создай презентацию на 12 слайдов по приложенному тексту.', a: 'D', why: 'Это задача: действие, результат и объём.' },
+  { t: 'Оформи в виде таблицы: № слайда, заголовок, тезисы, визуал.', a: 'F', why: 'Это формат: форма и состав результата.' },
+  { t: 'Студенты должны научиться применять нормы к ситуации.', a: 'C', why: 'Цель занятия относится к контексту: она объясняет, зачем нужна презентация.' },
+  { t: 'Выступай как методист по цифровому обучению.', a: 'R', why: 'Это роль: позиция эксперта.' },
+  { t: 'Подготовь по одному вопросу для обсуждения после каждого раздела.', a: 'D', why: 'Это дополнительная задача: что ещё нужно сделать.' },
+  { t: 'Не более трёх тезисов на слайд, простой язык.', a: 'F', why: 'Ограничения по объёму и стилю уточняют формат результата.' }
+];
+
+var BUILD_HINTS = {
+  role: 'Кто отвечает: специализация ИИ',
+  ctx: 'Для кого, по какой теме, какое занятие и какая цель',
+  task: 'Что сделать и какой результат получить',
+  fmt: 'Число слайдов, из чего состоит слайд, в каком виде выдать, стиль',
+  limits: 'Что запрещено и какие измеримые рамки'
+};
+
+var LIMIT_CHIPS = [
+  'Используй только приложенный текст, ничего не добавляй от себя.',
+  'Если данных в тексте нет, пометь «нет в тексте».',
+  'Укажи, откуда взят каждый тезис в тексте.',
+  'Не более 3 тезисов на слайд, не более 12 слов в тезисе.',
+  'Пиши простым научным языком, без жаргона.'
+];
+
+var TRAIN = [
+  { title: 'Слишком общий запрос', weak: 'Сделай презентацию по гражданскому праву',
+    sample: 'Ты методист и дизайнер учебных презентаций для вуза. Бакалавриат «Юриспруденция», 2 курс. Лекция 80 минут, тема «Договор купли-продажи». Цель: студенты применяют нормы к ситуации. Создай презентацию на 12 слайдов только по приложенному тексту лекции, ничего не добавляй от себя. Оформи в виде таблицы: № слайда, заголовок, до 3 тезисов, визуал, откуда взято в тексте. Если данных в тексте нет, пометь «нет в тексте».' },
+  { title: 'Роль есть, остального нет', weak: 'Ты преподаватель. Сделай слайды по моей лекции.',
+    sample: 'Ты дизайнер учебных презентаций для вуза. Магистратура «Экономика», 1 курс, группа 20 человек. Лекция 80 минут, тема «Структура капитала». Цель: слушатели рассчитывают стоимость капитала. Преврати мой приложенный текст лекции в презентацию на 10 слайдов, используй только этот текст и не придумывай факты. Формат: нумерованный список слайдов с заголовком, тремя тезисами и идеей визуала. Не более 12 слов в тезисе. Укажи фрагмент текста, откуда взят каждый тезис.' },
+  { title: 'Оценочные слова вместо критериев', weak: 'Мне нужна очень красивая и современная презентация, чтобы студентам было интересно. Сделай её как можно лучше и подробнее.',
+    sample: 'Ты методист и редактор учебных презентаций. Магистратура, 1 курс. Практическое занятие 90 минут, тема «Формирующее оценивание». Цель: слушатели составляют критерии оценивания. Создай презентацию на 8 слайдов по тексту, который я приложил, ничего не добавляй от себя. Таблица: № слайда, заголовок, до 3 тезисов, вопрос для аудитории. Если данных в тексте нет, пометь «нет в тексте».' }
+];
+
+var PAIRS = [
+  { a: 'Ты методист учебных презентаций. Бакалавриат, 2 курс, лекция 80 минут. Создай 12 слайдов только по приложенному тексту. Таблица: № слайда, заголовок, до 3 тезисов, визуал.',
+    b: 'Мне нужна очень хорошая и современная презентация для студентов юридического направления, чтобы им было интересно и понятно, красивая, подробная, с примерами и статистикой, как у лучших преподавателей. Пожалуйста, сделай как можно лучше.',
+    right: 'a', why: 'Длина не равна качеству. В варианте B много слов, но нет роли, формата, объёма и опоры на текст. Вариант A короче, зато каждое слово задаёт условие.' },
+  { a: 'Ты методист учебных презентаций. Бакалавриат, 2 курс, лекция 80 минут. Создай презентацию на 12 слайдов по приложенному тексту и добавь свежую статистику и судебные примеры из практики. Таблица: № слайда, заголовок, тезисы.',
+    b: 'Ты методист учебных презентаций. Бакалавриат, 2 курс, лекция 80 минут. Создай презентацию на 12 слайдов только по приложенному тексту. Если данных в тексте нет, пометь «нет в тексте». Таблица: № слайда, заголовок, тезисы.',
+    right: 'b', why: 'Просьба добавить статистику и примеры «от себя» провоцирует выдуманные данные и несуществующие дела. В варианте B ИИ ограничен текстом и обязан помечать пробелы.' },
+  { a: 'Создай презентацию по приложенному тексту. Сделай красиво.',
+    b: 'Создай презентацию по приложенному тексту. На каждом слайде заголовок и до 3 тезисов, не более 12 слов в тезисе.',
+    right: 'b', why: '«Красиво» нельзя проверить. «До 3 тезисов, не более 12 слов» можно проверить сразу. Измеримый критерий всегда лучше оценочного слова.' }
+];
+
+var ITER_IDEAS = [
+  'Сократи презентацию до 10 слайдов.',
+  'Добавь на каждый слайд один вопрос для аудитории.',
+  'Вынеси определения из текста на отдельный слайд.',
+  'Для каждого тезиса укажи фрагмент текста, откуда он взят.',
+  'Если в тексте нет данных, пиши «нет в тексте».'
+];
+
+var CHECKS = [
+  'Каждый слайд сверен с текстом лекции',
+  'Нет фактов, цифр и примеров, которых нет в моём тексте',
+  'Нет выдуманных источников, дел, цитат и ссылок',
+  'Термины использованы так же, как в моей лекции',
+  'Уровень сложности подходит студентам этого курса',
+  'Логика слайдов повторяет логику лекции',
+  'В презентации нет персональных данных',
+  'Я сам отредактировал итог перед использованием'
+];
+/* ===== END DATA ===== */
+
+
+/* ===== APP ===== */
+(function () {
+  var KEY = 'ptr_trainer_v1';
+  var S = {
+    stage: 0, visited: {},
+    passport: { dir: '', course: '', topic: '', goal: '', format: '' },
+    diag: { text: '', score: null, done: false },
+    quiz: {},
+    build: { role: '', ctx: '', task: '', fmt: '', limits: '' },
+    train: { idx: 0, texts: ['', '', ''], best: [0, 0, 0], shown: [false, false, false] },
+    pairs: {},
+    iters: [{ text: '', note: '' }],
+    checks: {}
+  };
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      Object.keys(S).forEach(function (k) { if (d[k] !== undefined) S[k] = d[k]; });
+    } catch (e) { /* без хранилища работаем в памяти */ }
+  }
+  var saveT = null;
+  function save() {
+    clearTimeout(saveT);
+    saveT = setTimeout(function () { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }, 250);
+  }
+
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  var toastT = null;
+  function toast(msg) {
+    var t = $('#toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('show'); }, 2200);
+  }
+  function fallbackCopy(txt) {
+    try {
+      var ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); var ok = document.execCommand('copy'); document.body.removeChild(ta); return ok;
+    } catch (e) { return false; }
+  }
+  function copyText(txt) {
+    var done = function (ok) { toast(ok ? 'Скопировано' : 'Не удалось скопировать: выделите текст вручную'); };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(fallbackCopy(txt)); });
+        return;
+      }
+    } catch (e) {}
+    done(fallbackCopy(txt));
+  }
+
+  /* ---------- общие виджеты ---------- */
+  function ring(score) {
+    var c = 2 * Math.PI * 42, off = c * (1 - score / 100);
+    var col = score >= 80 ? '#2F9E5B' : score >= 60 ? '#0E9E98' : score >= 35 ? '#B9791A' : '#C8553D';
+    return '<svg class="ring" viewBox="0 0 100 100" role="img" aria-label="Оценка ' + score + ' из 100">' +
+      '<circle cx="50" cy="50" r="42" fill="#fff" stroke="#D3EAE8" stroke-width="9"/>' +
+      '<circle cx="50" cy="50" r="42" fill="none" stroke="' + col + '" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '" transform="rotate(-90 50 50)"/>' +
+      '<text x="50" y="52" text-anchor="middle" font-size="26" fill="#1F2D6B">' + score + '</text>' +
+      '<text x="50" y="68" text-anchor="middle" font-size="10" fill="#52627D">из 100</text></svg>';
+  }
+  function bars(res) {
+    return '<div class="bars">' + res.groups.map(function (g) {
+      var cls = g.pct >= 80 ? 'hi' : g.pct < 35 ? 'lo' : '';
+      return '<div class="bar"><span>' + g.name + '</span><div class="track"><div class="fill ' + cls + '" style="width:' + g.pct + '%"></div></div><span class="pct">' + g.pct + '%</span></div>';
+    }).join('') + '</div>';
+  }
+  function warns(res) { return res.warnings.map(function (w) { return '<div class="warn">' + esc(w) + '</div>'; }).join(''); }
+  function todo(res, n) {
+    var m = res.missing.slice(0, n || 3);
+    if (!m.length) return '<p><b>Все правила выполнены.</b> Теперь проверьте, как ИИ справится с реальным текстом лекции.</p>';
+    return '<b>Что улучшить в первую очередь</b><ol class="todo">' + m.map(function (r) { return '<li>' + esc(r.hint) + '</li>'; }).join('') + '</ol>';
+  }
+  function fbFull(res) {
+    return '<div class="fb-head">' + ring(res.score) + '<div><span class="lvl ' + res.level.cls + '">' + res.level.name + '</span><div class="muted small">Оценка по правилам, 0–100</div></div></div>' +
+      bars(res) + warns(res) + todo(res, 3);
+  }
+  function fieldRules(res, field) {
+    return '<ul class="rules">' + res.rules.filter(function (r) { return r.field === field; }).map(function (r) {
+      var c = r.v >= 1 ? 'ok' : r.v > 0 ? 'part' : 'no', s = r.v >= 1 ? '✓' : r.v > 0 ? '◐' : '✕';
+      var lab = r.v >= 1 ? 'выполнено' : r.v > 0 ? 'частично' : 'не выполнено';
+      return '<li><span class="ic ' + c + '" aria-label="' + lab + '">' + s + '</span><span>' + esc(r.label) + (r.v < 1 ? '<span class="hint">' + esc(r.hint) + '</span>' : '') + '</span></li>';
+    }).join('') + '</ul>';
+  }
+
+  /* ---------- стадии ---------- */
+  function stStart() {
+    var p = S.passport;
+    function inp(k, label, ph) { return '<div class="field"><label class="lbl" for="pp-' + k + '">' + label + '</label><input class="inp" id="pp-' + k + '" data-pp="' + k + '" value="' + esc(p[k]) + '" placeholder="' + esc(ph) + '"></div>'; }
+    return '<section class="card"><h2>Кейс: презентация по тексту вашей лекции</h2>' +
+      '<p>У вас есть готовый текст лекции. Вы хотите, чтобы ИИ превратил его в презентацию. Тренажёр учит писать для этого точный промпт, за 8 коротких этапов, примерно 40 минут.</p>' +
+      '<div class="grid3">' +
+      '<div class="card white" style="margin:0"><b>Сразу видно результат</b><br><span class="muted small">Оценка от 0 до 100 и подсказки после каждого изменения.</span></div>' +
+      '<div class="card white" style="margin:0"><b>Проверка по правилам</b><br><span class="muted small">Тренажёр оценивает структуру промпта. Фактическую точность ответа ИИ проверяете вы.</span></div>' +
+      '<div class="card white" style="margin:0"><b>Данные остаются у вас</b><br><span class="muted small">Ничего не отправляется на сервер. Прогресс хранится в этом браузере.</span></div></div></section>' +
+      '<section class="card"><h2>Паспорт лекции</h2><p class="muted">Эти данные нужны для подсказок в конструкторе.</p>' +
+      '<div class="grid2"><div>' + inp('dir', 'Направление и уровень', '') + inp('course', 'Курс и аудитория', '') + '</div><div>' +
+      inp('topic', 'Тема лекции', '') + inp('goal', 'Цель и результат для студентов', '') + inp('format', 'Формат и время', '') + '</div></div>' +
+      '<div class="row"><button class="btn alt" id="ppClr">Очистить</button></div></section>';
+  }
+  function bindStart() {
+    $$('[data-pp]').forEach(function (i) { i.addEventListener('input', function () { S.passport[i.dataset.pp] = i.value; save(); }); });
+    $('#ppClr').onclick = function () { Object.keys(S.passport).forEach(function (k) { S.passport[k] = ''; }); save(); render(); };
+  }
+
+  function stDiag() {
+    var locked = S.diag.done;
+    var res = locked ? analyze(S.diag.text) : null;
+    return '<section class="card"><h2>Диагностика: как вы пишете сейчас</h2>' +
+      '<p>Напишите промпт так, как вы обычно просите ИИ создать презентацию по тексту лекции. Не старайтесь написать идеально: это точка отсчёта, с ней мы сравним итог.</p>' +
+      '<label class="lbl" for="diagTa">Ваш промпт</label>' +
+      '<textarea class="ta" id="diagTa" rows="6" ' + (locked ? 'readonly' : '') + ' placeholder="Напишите, как вы обычно просите ИИ сделать презентацию.">' + esc(S.diag.text) + '</textarea>' +
+      '<div class="row" style="margin-top:12px">' + (locked ? '<span class="lvl lv3">Диагностика зафиксирована</span>' : '<button class="btn" id="diagGo" disabled>Проверить промпт</button>') + '</div></section>' +
+      (locked ? '<section class="card white"><h2>Результат диагностики</h2>' + fbFull(res) + '<p class="muted small">Первая оценка сохранена. В конце вы увидите, насколько вырос ваш промпт.</p></section>' : '');
+  }
+  function bindDiag() {
+    var ta = $('#diagTa'), go = $('#diagGo');
+    if (!go) return;
+    function chk() { go.disabled = ta.value.trim().length < 5; }
+    ta.addEventListener('input', function () { S.diag.text = ta.value; chk(); save(); });
+    chk();
+    go.onclick = function () { S.diag.text = ta.value; S.diag.score = analyze(ta.value).score; S.diag.done = true; save(); render(); };
+  }
+
+  function quizHTML() {
+    var ok = 0;
+    var items = QUIZ.map(function (q, i) {
+      var a = S.quiz[i]; if (a === q.a) ok++;
+      var opts = [['R', 'Роль'], ['C', 'Контекст'], ['D', 'Задача'], ['F', 'Формат']].map(function (o) {
+        var cls = a ? (o[0] === q.a ? 'ok' : (o[0] === a ? 'no' : '')) : '';
+        return '<button class="opt ' + cls + '" data-q="' + i + '" data-a="' + o[0] + '" ' + (a ? 'disabled' : '') + '>' + o[1] + '</button>';
+      }).join('');
+      var fb = a ? '<div class="fbtxt">' + (a === q.a ? '✓ Верно. ' : '✕ Нет, это ' + ({ R: 'роль', C: 'контекст', D: 'задача', F: 'формат' }[q.a]) + '. ') + esc(q.why) + '</div>' : '';
+      return '<div class="q"><div class="t">' + (i + 1) + '. «' + esc(q.t) + '»</div><div class="opts">' + opts + '</div>' + fb + '</div>';
+    }).join('');
+    var answered = Object.keys(S.quiz).length;
+    return '<p><b>Верно: ' + ok + ' из ' + QUIZ.length + '</b> <span class="muted">(отвечено ' + answered + ')</span></p>' + items;
+  }
+  function stRcdf() {
+    var cards = RCDF_CARDS.map(function (c) {
+      return '<div class="rc"><span class="letter">' + c.l + '</span><h3>' + c.name + '</h3><span class="en">' + c.en.toUpperCase() + '</span><p style="margin-top:10px">' + esc(c.why) + '</p>' +
+        '<div class="ex bad"><b>Слабо</b>' + esc(c.bad) + '</div><div class="ex good"><b>Хорошо</b>' + esc(c.good) + '</div></div>';
+    }).join('');
+    return '<section class="card"><h2>Схема RCDF</h2><p>Хороший запрос состоит из четырёх частей: роль, контекст, задача, формат.</p><div class="grid2">' + cards + '</div>' +
+      '<div class="card navy" style="margin:18px 0 0"><h3 style="margin-top:0">Два усилителя для работы по вашему тексту</h3><p style="margin:0"><b>Опора на текст:</b> скажите, что текст приложен, и запретите ИИ добавлять от себя. <b>Ограничения:</b> задайте измеримые рамки и попросите указывать, откуда взят каждый тезис.</p></div></section>' +
+      '<section class="card"><h2>Распознайте часть схемы</h2><p>К какой части RCDF относится фрагмент? Нажмите на ответ.</p><div id="quiz">' + quizHTML() + '</div></section>';
+  }
+  function bindRcdf() {
+    $('#quiz').addEventListener('click', function (e) {
+      var b = e.target.closest('.opt'); if (!b || b.disabled) return;
+      S.quiz[b.dataset.q] = b.dataset.a; save(); $('#quiz').innerHTML = quizHTML();
+    });
+  }
+
+  function stBuild() {
+    var F = [['role', 'R', 'Роль'], ['ctx', 'C', 'Контекст'], ['task', 'D', 'Задача'], ['fmt', 'F', 'Формат'], ['limits', '+', 'Ограничения и проверка']];
+    var rows = F.map(function (f) {
+      return '<div class="field"><label class="lbl" for="b-' + f[0] + '"><span class="tag">' + f[1] + '</span>' + f[2] + '</label>' +
+        '<textarea class="ta" id="b-' + f[0] + '" data-b="' + f[0] + '" rows="' + (f[0] === 'ctx' ? 3 : 2) + '" placeholder="' + esc(BUILD_HINTS[f[0]]) + '">' + esc(S.build[f[0]]) + '</textarea>' +
+        '<div id="st-' + f[0] + '"></div></div>';
+    }).join('');
+    var chips = LIMIT_CHIPS.map(function (c, i) { return '<button class="chip" data-chip="' + i + '">+ ' + esc(c) + '</button>'; }).join(' ');
+    return '<section class="card"><h2>Конструктор промпта</h2><p>Заполните части схемы для вашей лекции. Справа сразу видно оценку и собранный промпт. Приложите текст лекции в ИИ-чате отдельным файлом, а в промпте сошлитесь на него.</p>' +
+      '<div class="row"><button class="btn alt" id="bClr">Очистить</button></div></section>' +
+      '<div class="build"><div><div class="card">' + rows + '<div class="lbl">Быстрые ограничения</div><div class="row">' + chips + '</div></div></div>' +
+      '<div class="sticky"><div class="card" id="bPanel"></div></div></div>';
+  }
+  function updateBuild() {
+    var res = analyze(S.build);
+    ['role', 'ctx', 'task', 'fmt', 'limits'].forEach(function (f) { $('#st-' + f).innerHTML = fieldRules(res, f); });
+    var asm = assemble(S.build);
+    $('#bPanel').innerHTML = '<div class="fb-head">' + ring(res.score) + '<div><span class="lvl ' + res.level.cls + '">' + res.level.name + '</span><div class="muted small">Цель: 80 и выше</div></div></div>' + bars(res) + warns(res) +
+      '<b>Собранный промпт</b><div class="preview" style="margin:8px 0">' + (asm ? esc(asm) : '<span class="muted">Заполните поля слева</span>') + '</div>' +
+      '<button class="btn" id="bCopy" ' + (asm ? '' : 'disabled') + '>Скопировать промпт</button>';
+    var cb = $('#bCopy'); if (cb) cb.onclick = function () { copyText(assemble(S.build)); };
+    $$('.chip').forEach(function (c) { c.classList.toggle('used', S.build.limits.indexOf(LIMIT_CHIPS[c.dataset.chip]) >= 0); });
+  }
+  function bindBuild() {
+    $$('[data-b]').forEach(function (t) { t.addEventListener('input', function () { S.build[t.dataset.b] = t.value; save(); updateBuild(); }); });
+    $('#bClr').onclick = function () { Object.keys(S.build).forEach(function (k) { S.build[k] = ''; }); save(); render(); };
+    $$('.chip').forEach(function (c) {
+      c.onclick = function () {
+        var txt = LIMIT_CHIPS[c.dataset.chip];
+        if (S.build.limits.indexOf(txt) < 0) { S.build.limits = (S.build.limits.trim() ? S.build.limits.trim() + ' ' : '') + txt; $('#b-limits').value = S.build.limits; save(); updateBuild(); }
+      };
+    });
+    updateBuild();
+  }
+
+  function stTrain() {
+    var i = S.train.idx, ex = TRAIN[i];
+    var done = S.train.best.filter(function (b) { return b >= 80; }).length;
+    var tabs = TRAIN.map(function (t, k) { return '<button class="tab ' + (k === i ? 'on ' : '') + (S.train.best[k] >= 80 ? 'done' : '') + '" data-tab="' + k + '">Упражнение ' + (k + 1) + '</button>'; }).join('');
+    var txt = S.train.texts[i] || ex.weak;
+    return '<section class="card"><h2>Тренажёр: улучшите промпт</h2><p>Перепишите слабый промпт так, чтобы набрать <b>80 баллов и больше</b>. Тему и аудиторию придумайте свои. Выполнено: <b id="trDone">' + done + '</b> из 3.</p>' +
+      '<div class="tabs" id="trTabs">' + tabs + '</div>' +
+      '<h3 style="margin-top:0">' + esc(ex.title) + '</h3><blockquote class="weak">' + esc(ex.weak) + '</blockquote>' +
+      '<div class="build"><div><label class="lbl" for="trTa">Ваша версия</label><textarea class="ta" id="trTa" rows="9">' + esc(txt) + '</textarea>' +
+      '<div class="row" style="margin-top:10px"><button class="btn alt" id="trShow">' + (S.train.shown[i] ? 'Скрыть образец' : 'Показать образец') + '</button><button class="btn alt" id="trReset">Вернуть исходный</button></div>' +
+      '<div id="trSample"></div></div><div class="card white" id="trFb" style="margin:0"></div></div></section>';
+  }
+  function updateTrain() {
+    var i = S.train.idx, ta = $('#trTa'), res = analyze(ta.value);
+    S.train.texts[i] = ta.value;
+    if (res.score > S.train.best[i]) S.train.best[i] = res.score;
+    save();
+    $('#trFb').innerHTML = fbFull(res) + (res.score >= 80 ? '<div class="card" style="background:#E6F3F0;margin:10px 0 0"><b>✓ Цель достигнута.</b> Переходите к следующему упражнению.</div>' : '');
+    $('#trDone').textContent = S.train.best.filter(function (b) { return b >= 80; }).length;
+    $$('#trTabs .tab').forEach(function (t, k) { t.classList.toggle('done', S.train.best[k] >= 80); });
+    var sm = $('#trSample');
+    if (S.train.shown[i]) sm.innerHTML = '<div class="sample"><b>Образец (' + analyze(TRAIN[i].sample).score + ' из 100)</b><br>' + esc(TRAIN[i].sample) + '</div>'; else sm.innerHTML = '';
+  }
+  function bindTrain() {
+    $('#trTa').addEventListener('input', updateTrain);
+    $$('#trTabs .tab').forEach(function (t) { t.onclick = function () { S.train.idx = +t.dataset.tab; save(); render(); }; });
+    $('#trShow').onclick = function () { var i = S.train.idx; S.train.shown[i] = !S.train.shown[i]; save(); render(); };
+    $('#trReset').onclick = function () { S.train.texts[S.train.idx] = ''; save(); render(); };
+    updateTrain();
+  }
+
+  function pairsHTML() {
+    var ok = 0;
+    var cards = PAIRS.map(function (p, i) {
+      var ch = S.pairs[i]; if (ch === p.right) ok++;
+      function side(k) {
+        var txt = p[k], cls = '';
+        if (ch) cls = k === p.right ? 'right' : (k === ch ? 'wrong' : '');
+        return '<div class="opt-card ' + cls + '"><span class="lab">Вариант ' + k.toUpperCase() + '</span><div>' + esc(txt) + '</div>' +
+          (ch ? '<div class="small"><b>Оценка по правилам: ' + analyze(txt).score + '</b></div>' : '<button class="btn alt" data-p="' + i + '" data-k="' + k + '">Выбрать ' + k.toUpperCase() + '</button>') + '</div>';
+      }
+      return '<div class="card white"><h3 style="margin-top:0">Пара ' + (i + 1) + '. Какой промпт лучше?</h3><div class="pr">' + side('a') + side('b') + '</div>' +
+        (ch ? '<p style="margin-top:12px"><b>' + (ch === p.right ? '✓ Верно. ' : '✕ Лучше вариант ' + p.right.toUpperCase() + '. ') + '</b>' + esc(p.why) + '</p>' : '') + '</div>';
+    }).join('');
+    return '<p><b>Верно: ' + ok + ' из ' + PAIRS.length + '</b></p>' + cards;
+  }
+  function stPairs() {
+    return '<section class="card"><h2>Сравните промпты</h2><p>В каждой паре выберите промпт, который даст лучший результат. Подсказка: длинный не значит хороший.</p></section><div id="pairs">' + pairsHTML() + '</div>';
+  }
+  function bindPairs() {
+    $('#pairs').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-p]'); if (!b) return;
+      S.pairs[b.dataset.p] = b.dataset.k; save(); $('#pairs').innerHTML = pairsHTML();
+    });
+  }
+
+  function seedIters() {
+    return;
+  }
+  function lastBefore(n) { for (var k = n - 1; k >= 0; k--) if (S.iters[k].text.trim()) return S.iters[k].text; return ''; }
+  function itersHTML() {
+    return S.iters.map(function (it, i) {
+      return '<div class="it"><div class="it-head"><b>Версия ' + (i + 1) + '</b><span><span class="badge" id="is-' + i + '"></span> <span class="delta" id="id-' + i + '"></span></span></div>' +
+        '<textarea class="ta" data-it="' + i + '" rows="6" placeholder="' + (i === 0 ? 'Вставьте сюда промпт, который вы отправили в ИИ-чат.' : 'Впишите улучшенную версию промпта.') + '" aria-label="Текст версии ' + (i + 1) + '">' + esc(it.text) + '</textarea>' +
+        '<div class="row" style="margin-top:8px"><button class="btn alt small" data-fill="' + i + '">' + (i === 0 ? 'Вставить промпт из конструктора' : 'Вставить предыдущую версию') + '</button></div>' +
+        (i > 0 ? '<label class="lbl" style="margin-top:8px" for="n-' + i + '">Что изменили и зачем</label><input class="inp" id="n-' + i + '" data-note="' + i + '" value="' + esc(it.note) + '" placeholder="Что изменили и почему">' : '<p class="muted small" style="margin:8px 0 0">Отправьте версию в ИИ-чат вместе с файлом лекции и посмотрите ответ.</p>') + '</div>';
+    }).join('');
+  }
+  function stIter() {
+    seedIters();
+    var chips = ITER_IDEAS.map(function (c, i) { return '<button class="chip" data-idea="' + i + '">+ ' + esc(c) + '</button>'; }).join(' ');
+    var checks = CHECKS.map(function (c, i) { return '<label><input type="checkbox" data-ck="' + i + '" ' + (S.checks[i] ? 'checked' : '') + '><span>' + esc(c) + '</span></label>'; }).join('');
+    return '<section class="card"><h2>Итерации: доводим промпт</h2><p>Рекомендуем минимум две правки. Отправьте версию в ИИ-чат, посмотрите ответ, сформулируйте, что не так, и внесите правку в новую версию. Запишите, что изменили и почему.</p>' +
+      '<div id="iters">' + itersHTML() + '</div>' +
+      '<div class="row"><button class="btn" id="itAdd">Добавить версию</button><button class="btn alt" id="itDel">Удалить последнюю</button></div>' +
+      '<h3>Идеи для уточнений</h3><p class="muted small">Нажмите, и фраза добавится в последнюю версию.</p><div class="row">' + chips + '</div>' +
+      '<h3>Рост по версиям</h3><div class="chart" id="itChart" role="img" aria-label="Оценка по версиям промпта"></div></section>' +
+      '<section class="card white"><h2>Проверьте ответ ИИ</h2><p class="muted">Тренажёр оценивает промпт, а ответ ИИ проверяете вы. Отметьте, что вы сделали.</p><div class="checks">' + checks + '</div><p><b id="ckCount"></b></p></section>';
+  }
+  function updateIters() {
+    var prev = null, scores = [];
+    S.iters.forEach(function (it, i) {
+      var has = !!it.text.trim(), sc = has ? analyze(it.text).score : 0; scores.push(sc);
+      var b = $('#is-' + i), d = $('#id-' + i);
+      if (b) b.textContent = has ? sc + ' / 100' : 'пусто';
+      if (d) {
+        if (prev === null || !has) { d.textContent = ''; d.className = 'delta'; }
+        else { var df = sc - prev; d.textContent = df === 0 ? '' : (df > 0 ? '+' : '') + df; d.className = 'delta ' + (df > 0 ? 'up' : df < 0 ? 'down' : ''); }
+      }
+      if (has) prev = sc;
+    });
+    $('#itChart').innerHTML = scores.map(function (s, i) { return '<div class="col"><span>' + s + '</span><div class="b" style="height:' + Math.max(2, s) * 0.8 + '%"></div><span>v' + (i + 1) + '</span></div>'; }).join('');
+    var n = CHECKS.filter(function (c, i) { return S.checks[i]; }).length;
+    $('#ckCount').textContent = 'Отмечено: ' + n + ' из ' + CHECKS.length;
+    $$('[data-idea]').forEach(function (c) { var last = S.iters[S.iters.length - 1].text; c.classList.toggle('used', last.indexOf(ITER_IDEAS[c.dataset.idea]) >= 0); });
+  }
+  function bindIter() {
+    function wire() {
+      $$('[data-it]').forEach(function (t) { t.addEventListener('input', function () { S.iters[+t.dataset.it].text = t.value; save(); updateIters(); }); });
+      $$('[data-note]').forEach(function (t) { t.addEventListener('input', function () { S.iters[+t.dataset.note].note = t.value; save(); }); });
+    }
+    function redraw() { $('#iters').innerHTML = itersHTML(); wire(); updateIters(); }
+    $('#iters').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-fill]'); if (!b) return;
+      var i = +b.dataset.fill, src = i === 0 ? (assemble(S.build) || S.diag.text || '') : S.iters[i - 1].text;
+      if (!src.trim()) { toast(i === 0 ? 'В конструкторе пока пусто.' : 'Предыдущая версия пуста.'); return; }
+      S.iters[i].text = src; save(); redraw();
+    });
+    wire();
+    $('#itAdd').onclick = function () { S.iters.push({ text: '', note: '' }); save(); redraw(); };
+    $('#itDel').onclick = function () { if (S.iters.length > 1) { S.iters.pop(); save(); redraw(); } };
+    $$('[data-idea]').forEach(function (c) {
+      c.onclick = function () {
+        var last = S.iters[S.iters.length - 1], txt = ITER_IDEAS[c.dataset.idea];
+        if (!last.text.trim()) last.text = lastBefore(S.iters.length - 1) || assemble(S.build) || '';
+        if (last.text.indexOf(txt) < 0) { last.text = (last.text.trim() ? last.text.trim() + ' ' : '') + txt; save(); redraw(); }
+      };
+    });
+    $$('[data-ck]').forEach(function (c) { c.onchange = function () { S.checks[c.dataset.ck] = c.checked; save(); updateIters(); }; });
+    updateIters();
+  }
+
+  function lastPrompt() {
+    for (var i = S.iters.length - 1; i >= 0; i--) if (S.iters[i].text.trim()) return S.iters[i].text;
+    return assemble(S.build) || S.diag.text || '';
+  }
+  function metrics() {
+    var fp = lastPrompt(), fres = analyze(fp);
+    return {
+      fp: fp, fres: fres,
+      base: S.diag.done ? S.diag.score : null,
+      iters: S.iters.filter(function (i) { return i.text.trim(); }).length,
+      quiz: QUIZ.filter(function (q, i) { return S.quiz[i] === q.a; }).length,
+      train: S.train.best.filter(function (b) { return b >= 80; }).length,
+      pairs: PAIRS.filter(function (p, i) { return S.pairs[i] === p.right; }).length,
+      checks: CHECKS.filter(function (c, i) { return S.checks[i]; }).length
+    };
+  }
+  function reportText(m) {
+    var p = S.passport;
+    var L = ['ОТЧЁТ: тренажёр промптов', '',
+      'Направление и уровень: ' + (p.dir || '—'), 'Курс и аудитория: ' + (p.course || '—'), 'Тема лекции: ' + (p.topic || '—'), 'Формат: ' + (p.format || '—'), '',
+      'Диагностика: ' + (m.base === null ? 'не пройдена' : m.base + ' из 100'),
+      'Итоговый промпт: ' + m.fres.score + ' из 100 (' + m.fres.level.name + ')',
+      'Версий промпта: ' + m.iters,
+      'Распознавание частей RCDF: ' + m.quiz + ' из ' + QUIZ.length,
+      'Тренажёр (80+ баллов): ' + m.train + ' из ' + TRAIN.length,
+      'Сравнение промптов: ' + m.pairs + ' из ' + PAIRS.length,
+      'Проверка ответа ИИ: ' + m.checks + ' из ' + CHECKS.length, '', 'ИТОГОВЫЙ ПРОМПТ:', m.fp, ''];
+    S.iters.forEach(function (it, i) { if (i > 0 && it.note.trim()) L.push('Версия ' + (i + 1) + ': ' + it.note.trim()); });
+    return L.join('\n');
+  }
+  function stFinal() {
+    var m = metrics();
+    var diff = m.base === null ? '' : (m.fres.score - m.base >= 0 ? '+' : '') + (m.fres.score - m.base);
+    var rows = [
+      ['Диагностика (старт)', m.base === null ? 'не пройдена' : m.base + ' / 100'],
+      ['Итоговый промпт', m.fres.score + ' / 100' + (diff ? ' (' + diff + ')' : '')],
+      ['Версий промпта', m.iters],
+      ['Части RCDF распознаны', m.quiz + ' из ' + QUIZ.length],
+      ['Тренажёр, упражнения на 80+', m.train + ' из ' + TRAIN.length],
+      ['Сравнение промптов', m.pairs + ' из ' + PAIRS.length],
+      ['Проверка ответа ИИ', m.checks + ' из ' + CHECKS.length]
+    ].map(function (r) { return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join('');
+    return '<section class="card navy"><h2>Ваш результат</h2><div class="fb-head" style="align-items:center">' + ring(m.fres.score) + '<div><span class="lvl ' + m.fres.level.cls + '">' + m.fres.level.name + '</span><p style="margin:6px 0 0">' + (m.base === null ? 'Итоговый уровень вашего промпта.' : 'Было ' + m.base + ', стало ' + m.fres.score + '.') + '</p></div></div></section>' +
+      '<div class="grid2"><section class="card white" style="margin:0"><h3 style="margin-top:0">Сводка</h3><table class="m">' + rows + '</table></section>' +
+      '<section class="card white" style="margin:0"><h3 style="margin-top:0">Что подтянуть</h3>' + bars(m.fres) + todo(m.fres, 3) + '</section></div>' +
+      '<section class="card" style="margin-top:18px"><h2>Итоговый промпт</h2><div class="preview" id="fpBox">' + (m.fp ? esc(m.fp) : '<span class="muted">Промпт пока пуст. Вернитесь к конструктору.</span>') + '</div>' +
+      '<div class="row" style="margin-top:12px"><button class="btn" id="fCopyP" ' + (m.fp ? '' : 'disabled') + '>Скопировать промпт</button><button class="btn alt" id="fCopyR">Скопировать отчёт</button></div></section>' +
+      '<section class="card white"><h3 style="margin-top:0">Дальше</h3><ol class="todo"><li>Откройте ИИ-чат или сервис презентаций.</li><li>Загрузите файл с текстом лекции и вставьте итоговый промпт.</li><li>Сверьте слайды с текстом по чек-листу из этапа «Итерации».</li></ol>' +
+      '<div class="row"><button class="btn alt" id="fReset">Начать заново</button></div></section>';
+  }
+  function bindFinal() {
+    var m = metrics();
+    var b = $('#fCopyP'); if (b) b.onclick = function () { copyText(m.fp); };
+    $('#fCopyR').onclick = function () { copyText(reportText(m)); };
+    var r = $('#fReset');
+    r.onclick = function () {
+      if (r.dataset.sure) {
+        try { localStorage.removeItem(KEY); } catch (e) {}
+        S = { stage: 0, visited: {}, passport: { dir: '', course: '', topic: '', goal: '', format: '' }, diag: { text: '', score: null, done: false }, quiz: {}, build: { role: '', ctx: '', task: '', fmt: '', limits: '' }, train: { idx: 0, texts: ['', '', ''], best: [0, 0, 0], shown: [false, false, false] }, pairs: {}, iters: [{ text: '', note: '' }], checks: {} };
+        render();
+      } else { r.dataset.sure = '1'; r.textContent = 'Точно удалить весь прогресс? Нажмите ещё раз'; }
+    };
+  }
+
+  /* ---------- каркас ---------- */
+  var VIEWS = [
+    { h: stStart, b: bindStart }, { h: stDiag, b: bindDiag }, { h: stRcdf, b: bindRcdf }, { h: stBuild, b: bindBuild },
+    { h: stTrain, b: bindTrain }, { h: stPairs, b: bindPairs }, { h: stIter, b: bindIter }, { h: stFinal, b: bindFinal }
+  ];
+  function go(i) {
+    S.stage = Math.max(0, Math.min(STEPS.length - 1, i)); save(); render(); window.scrollTo(0, 0);
+  }
+  function render() {
+    S.visited[S.stage] = true;
+    $('#stepper').innerHTML = STEPS.map(function (s, i) {
+      var cls = i === S.stage ? 'active' : (S.visited[i] && i < S.stage ? 'done' : '');
+      return '<li><button class="step ' + cls + '" data-go="' + i + '"' + (i === S.stage ? ' aria-current="step"' : '') + '><span class="num">' + (cls === 'done' ? '✓' : i + 1) + '</span>' + s.label + '</button></li>';
+    }).join('');
+    (function () { var a = $('.step.active'), st = $('#stepper'); if (a && st) st.scrollLeft = Math.max(0, a.offsetLeft - st.clientWidth / 2 + a.offsetWidth / 2); })();
+    var v = VIEWS[S.stage];
+    var nextDis = S.stage === 1 && !S.diag.done;
+    $('#view').innerHTML = v.h() +
+      '<div class="navbtns"><button class="btn alt" id="bk" ' + (S.stage === 0 ? 'disabled' : '') + '>← Назад</button>' +
+      (S.stage < STEPS.length - 1 ? '<button class="btn" id="nx" ' + (nextDis ? 'disabled' : '') + '>Далее →</button>' : '<span></span>') + '</div>' +
+      (nextDis ? '<p class="muted small" style="text-align:right">Сначала проверьте промпт, чтобы зафиксировать стартовую оценку.</p>' : '');
+    v.b();
+    $('#bk').onclick = function () { go(S.stage - 1); };
+    var nx = $('#nx'); if (nx) nx.onclick = function () { go(S.stage + 1); };
+    $$('.step').forEach(function (b) { b.onclick = function () { go(+b.dataset.go); }; });
+  }
+
+  load();
+  render();
+})();
+/* ===== END APP ===== */
+
+
+</script>
+</body>
+</html>
